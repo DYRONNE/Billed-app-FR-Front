@@ -17,9 +17,22 @@ export default class NewBill {
   }
   handleChangeFile = e => {
     e.preventDefault()
-    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
+    const fileInput = this.document.querySelector(`input[data-testid="file"]`);
+    const file = fileInput.files[0];
+    
+    // Vérification de l'extension du fichier
+    if (file) {
+        const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i; // Extensions autorisées
+        const fileName = file.name;
+
+        // Si l'extension du fichier n'est pas autorisée, afficher un message d'erreur
+        if (!allowedExtensions.exec(fileName)) {
+            alert("Veuillez télécharger un fichier avec une extension JPG, JPEG ou PNG.");
+            fileInput.value = ""; // Réinitialiser le champ de fichier
+            return; // Sortir de la fonction si l'extension n'est pas valide
+        }
+    }
+
     const formData = new FormData()
     const email = JSON.parse(localStorage.getItem("user")).email
     formData.append('file', file)
