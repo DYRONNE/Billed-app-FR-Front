@@ -150,9 +150,16 @@ export default class {
     }
   
     bills.forEach(bill => {
-      console.log(`Attaching click event for bill ID: ${bill.id}`);
-      $(document).on('click', `#open-bill${bill.id}`, (e) => this.handleEditTicket(e, bill, bills));
-
+      const billElement = $(`#open-bill${bill.id}`);
+    
+      // Supprimer tout événement de clic existant pour éviter les doublons
+      billElement.off('click');
+    
+      // Attacher un nouvel événement de clic
+      billElement.on('click', (e) => {
+        console.log(`Opening bill with ID: ${bill.id}`);
+        this.handleEditTicket(e, bill, bills);
+      });
     });
   
     return bills;

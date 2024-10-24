@@ -44,48 +44,56 @@ describe("Given I am connected as an employee", () => {
     });
 
     describe("when I click on 'Nouvelle note de frais'", () => {
-      test("then I should be redirected to the page 'envoyer une note de frais'", async () => {
-        window.onNavigate(ROUTES_PATH.Bills);
-        const onNavigate = jest.fn();
+      test("then I should be redirected to the page 'envoyer une note de frais'(ici on test la methode handleclick new bill", async () => {
+        window.onNavigate(ROUTES_PATH.Bills); // on simule une navigation sur la page des factures
+        const onNavigate = jest.fn(); //on crer une fonction Mock factice pour suivre les appels a Onnavigate
         
+
+        // ici on créez une nouvelle instance de la classe Bills, en lui passant le document, 
+        //la fonction de navigation, un mock de store et le localStorage de la fenêtre. 
+        //Cela permet à l'instance de la classe d'interagir avec ces éléments.
         const billsInstance = new Bills({
           document,
           onNavigate,
           store: mockStore, // Utilisation du mockStore ici
           localStorage: window.localStorage
         });
+        
 
-        document.body.innerHTML = BillsUI({ data: [] });
-        await waitFor(() => screen.getByTestId('btn-new-bill'));
+        document.body.innerHTML = BillsUI({ data: [] }); // mise a jour du contenu Html du corps du doc
+        await waitFor(() => screen.getByTestId('btn-new-bill'));//on attend aue le button soit affiche 
 
         const buttonNewBill = screen.getByTestId('btn-new-bill');
         buttonNewBill.addEventListener('click', billsInstance.handleClickNewBill.bind(billsInstance));
-
+        //ici on ajoute un ecoutur d´evenement et on appelle handlclicknewbill
         userEvent.click(buttonNewBill);
-        expect(onNavigate).toHaveBeenCalledWith(ROUTES_PATH.NewBill);
+        expect(onNavigate).toHaveBeenCalledWith(ROUTES_PATH.NewBill);// on verifie la redirection
       });
     });
 
     describe("When I click on an icon 'eye'", () => {
-      test("Then a modal should open with the bill image", () => {
-        const icon = document.createElement('div');
+      test("Then a modal should open with the bill image (test de la methode handle click icon eye9", () => {
+        const icon = document.createElement('div');//créez un nouvel élément l'icône en forme d'œil.
         icon.setAttribute('data-bill-url', 'https://fakeurl.com/bill.jpg');
 
-        $.fn.modal = jest.fn();
+        $.fn.modal = jest.fn();//mock de la fonction modal
         const modal = document.createElement('div');
         modal.setAttribute('id', 'modaleFile');
         modal.innerHTML = '<div class="modal-body"></div>';
-        document.body.append(modal);
+        document.body.append(modal);// creation et ajout de la modale au DOM
 
         const billsInstance = new Bills({ document, onNavigate: jest.fn(), store: mockStore, localStorage: window.localStorage });
-        billsInstance.handleClickIconEye(icon);
+        billsInstance.handleClickIconEye(icon);// creer intsnace de bill avec parametr t on appel la mthode handleclicke 
 
         const modalBody = document.querySelector('.modal-body');
         expect(modalBody.innerHTML).toContain('https://fakeurl.com/bill.jpg');
-        expect($.fn.modal).toHaveBeenCalledWith('show');
+        expect($.fn.modal).toHaveBeenCalledWith('show');//on verifie que la modal s´ouvre 
       });
     });
   });
+
+
+
 
   describe("getBills", () => {
   let billsInstance;
@@ -143,19 +151,20 @@ describe("Given I am connected as an employee", () => {
 
 });
 
+
 describe("getBills", () => {
   let billsInstance;
   let mockStore;
 
   beforeEach(() => {
-    // Mock du store et de la méthode bills().list()
+    // Mock du store et de la méthode bills().list() avant chaques test
     mockStore = {
       bills: jest.fn(() => ({
         list: jest.fn()
       }))
     };
     
-    // Instancier Bills avec le store mocké
+    // Instancier Bills avec le store mocké avant chaque test
     billsInstance = new Bills({
       document: document,
       onNavigate: jest.fn(),
